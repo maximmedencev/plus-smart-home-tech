@@ -1,0 +1,6 @@
+topics:
+    sensors: "telemetry.sensors.v1"
+    hubs: "telemetry.hubs.v1"
+bootstrap_server: "localhost:9092"
+key_serializer_class: "org.apache.kafka.common.serialization.StringSerializer"
+value_serializer_class: "ru.yandex.practicum.SmartHomeCollectorAvroSerializer"

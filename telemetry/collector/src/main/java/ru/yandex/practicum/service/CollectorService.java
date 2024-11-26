@@ -1,9 +1,10 @@
 package ru.yandex.practicum.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.avro.specific.SpecificRecordBase;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.CollectorClient;
 import ru.yandex.practicum.event.hub.*;
 import ru.yandex.practicum.event.mapper.HubMappers;
 import ru.yandex.practicum.event.mapper.SensorMappers;
@@ -13,28 +14,23 @@ import ru.yandex.practicum.event.sensor.*;
 @Service
 public class CollectorService {
 
-    private final CollectorClient collectorClient;
+    private final KafkaProducer<String, SpecificRecordBase> kafkaProducer;
 
     public SensorEvent collectSensorEvent(SensorEvent event, String topic) {
         switch (event.getType()) {
-            case CLIMATE_SENSOR_EVENT -> collectorClient
-                    .getProducer()
+            case CLIMATE_SENSOR_EVENT -> kafkaProducer
                     .send(new ProducerRecord<>(topic,
                             SensorMappers.maptoToClimateSensorAvro((ClimateSensorEvent) event)));
-            case LIGHT_SENSOR_EVENT -> collectorClient
-                    .getProducer()
+            case LIGHT_SENSOR_EVENT -> kafkaProducer
                     .send(new ProducerRecord<>(topic,
                             SensorMappers.maptoToLightSensorAvro((LightSensorEvent) event)));
-            case MOTION_SENSOR_EVENT -> collectorClient
-                    .getProducer()
+            case MOTION_SENSOR_EVENT -> kafkaProducer
                     .send(new ProducerRecord<>(topic,
                             SensorMappers.maptoToMotionSensorAvro((MotionSensorEvent) event)));
-            case SWITCH_SENSOR_EVENT -> collectorClient
-                    .getProducer()
+            case SWITCH_SENSOR_EVENT -> kafkaProducer
                     .send(new ProducerRecord<>(topic,
                             SensorMappers.mapToSwitchSensorAvro((SwitchSensorEvent) event)));
-            case TEMPERATURE_SENSOR_EVENT -> collectorClient
-                    .getProducer()
+            case TEMPERATURE_SENSOR_EVENT -> kafkaProducer
                     .send(new ProducerRecord<>(topic,
                             SensorMappers.mapToTemperatureSensorAvro((TemperatureSensorEvent) event)));
         }
@@ -43,25 +39,19 @@ public class CollectorService {
 
     public HubEvent collectHubEvent(HubEvent event, String topic) {
         switch (event.getType()) {
-            case DEVICE_ADDED -> collectorClient
-                    .getProducer()
+            case DEVICE_ADDED -> kafkaProducer
                     .send(new ProducerRecord<>(topic,
                             HubMappers.mapToToHubEventAvro((DeviceAddedEvent) event)));
-            case DEVICE_REMOVED -> collectorClient
-                    .getProducer()
+            case DEVICE_REMOVED -> kafkaProducer
                     .send(new ProducerRecord<>(topic,
                             HubMappers.mapToToHubEventAvro((DeviceRemovedEvent) event)));
-            case SCENARIO_ADDED -> collectorClient
-                    .getProducer()
+            case SCENARIO_ADDED -> kafkaProducer
                     .send(new ProducerRecord<>(topic,
                             HubMappers.mapToHubEventAvro((ScenarioAddedEvent) event)));
-            case SCENARIO_REMOVED -> collectorClient
-                    .getProducer()
+            case SCENARIO_REMOVED -> kafkaProducer
                     .send(new ProducerRecord<>(topic,
                             HubMappers.mapToHubEventAvro((ScenarioRemovedEvent) event)));
-
         }
         return event;
     }
-
 }
