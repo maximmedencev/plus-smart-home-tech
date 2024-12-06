@@ -1,7 +1,9 @@
 package ru.yandex.practicum.event.mapper;
 
 import ru.yandex.practicum.event.sensor.*;
+import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.*;
+import ru.yandex.practicum.grpc.telemetry.event.ClimateSensorEventProto;
 
 public class SensorMappers {
     public static ClimateSensorAvro maptoToClimateSensorAvro(ClimateSensorEvent event) {
@@ -54,4 +56,5 @@ public class SensorMappers {
                 .setTemperatureF(event.getTemperatureF())
                 .build();
     }
+
 }
