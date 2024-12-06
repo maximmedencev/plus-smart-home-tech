@@ -54,4 +54,5 @@ public class SensorMappers {
                 .setTemperatureF(event.getTemperatureF())
                 .build();
     }
+
 }
