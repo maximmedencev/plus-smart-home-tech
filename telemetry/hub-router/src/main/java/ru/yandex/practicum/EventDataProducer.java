@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.collector.CollectorControllerGrpc;
-import ru.yandex.practicum.grpc.telemetry.collector.CollectorResponse;
 import ru.yandex.practicum.grpc.telemetry.event.*;
 import ru.yandex.practicum.sensors.*;
 
