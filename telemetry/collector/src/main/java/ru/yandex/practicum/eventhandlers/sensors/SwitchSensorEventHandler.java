@@ -1,4 +1,4 @@
-package ru.yandex.practicum.eventhandlers;
+package ru.yandex.practicum.eventhandlers.sensors;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,15 +8,15 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
-import ru.yandex.practicum.kafka.telemetry.event.MotionSensorAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
+import ru.yandex.practicum.kafka.telemetry.event.SwitchSensorAvro;
 
 import java.time.Instant;
 
-@Slf4j
-@Component
 @RequiredArgsConstructor
-public class MotionSensorEventHandler implements SensorEventHandler {
+@Component
+@Slf4j
+public class SwitchSensorEventHandler implements SensorEventHandler {
     private final KafkaProducer<String, SpecificRecordBase> kafkaProducer;
 
     @Value("${topics.sensors}")
@@ -24,15 +24,13 @@ public class MotionSensorEventHandler implements SensorEventHandler {
 
     @Override
     public SensorEventProto.PayloadCase getMessageType() {
-        return SensorEventProto.PayloadCase.MOTION_SENSOR_EVENT;
+        return SensorEventProto.PayloadCase.SWITCH_SENSOR_EVENT;
     }
 
     @Override
     public void handle(SensorEventProto event) {
-        MotionSensorAvro motionSensorAvro = MotionSensorAvro.newBuilder()
-                .setLinkQuality(event.getLightSensorEvent().getLinkQuality())
-                .setMotion(event.getMotionSensorEvent().getMotion())
-                .setVoltage((event.getMotionSensorEvent().getVoltage()))
+        SwitchSensorAvro switchSensorAvro = SwitchSensorAvro.newBuilder()
+                .setState(event.getSwitchSensorEvent().getState())
                 .build();
 
         SensorEventAvro sensorEventAvro = SensorEventAvro.newBuilder()
@@ -40,7 +38,7 @@ public class MotionSensorEventHandler implements SensorEventHandler {
                 .setHubId(event.getHubId())
                 .setTimestamp(Instant.ofEpochSecond(event.getTimestamp().getSeconds(),
                         event.getTimestamp().getNanos()))
-                .setPayload(motionSensorAvro)
+                .setPayload(switchSensorAvro)
                 .build();
 
         kafkaProducer.send(new ProducerRecord<>(sensorsTopic, sensorEventAvro));

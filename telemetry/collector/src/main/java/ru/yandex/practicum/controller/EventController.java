@@ -6,8 +6,10 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
-import ru.yandex.practicum.eventhandlers.SensorEventHandler;
+import ru.yandex.practicum.eventhandlers.hub.HubEventHandler;
+import ru.yandex.practicum.eventhandlers.sensors.SensorEventHandler;
 import ru.yandex.practicum.grpc.telemetry.collector.CollectorControllerGrpc;
+import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 
 import java.util.Map;
@@ -20,14 +22,21 @@ import java.util.stream.Collectors;
 public class EventController extends CollectorControllerGrpc.CollectorControllerImplBase {
 
     private final Map<SensorEventProto.PayloadCase, SensorEventHandler> sensorEventHandlers;
+    private final Map<HubEventProto.PayloadCase, HubEventHandler> hubEventHandlers;
 
-    public EventController(Set<SensorEventHandler> sensorEventHandlers) {
+
+    public EventController(Set<SensorEventHandler> sensorEventHandlers, Set<HubEventHandler> hubEventHandlers) {
         this.sensorEventHandlers = sensorEventHandlers.stream()
                 .collect(Collectors.toMap(
                         SensorEventHandler::getMessageType,
                         Function.identity()
                 ));
-        System.out.println(this.sensorEventHandlers);
+
+        this.hubEventHandlers = hubEventHandlers.stream()
+                .collect(Collectors.toMap(
+                        HubEventHandler::getMessageType,
+                        Function.identity()
+                ));
     }
 
     @Override
@@ -48,6 +57,23 @@ public class EventController extends CollectorControllerGrpc.CollectorController
             responseObserver.onCompleted();
         } catch (Exception e) {
             // в случае исключения отправляем ошибку клиенту
+            System.out.println(e.getMessage());
+            responseObserver.onError(new StatusRuntimeException(Status.fromThrowable(e)));
+        }
+    }
+
+    @Override
+    public void collectHubEvent(HubEventProto request, StreamObserver<Empty> responseObserver) {
+        try {
+            if (hubEventHandlers.containsKey(request.getPayloadCase())) {
+                log.info("В {} получено {}", this.getClass().getName(), request);
+                hubEventHandlers.get(request.getPayloadCase()).handle(request);
+            } else {
+                throw new IllegalArgumentException("Не могу найти обработчик для события " + request.getPayloadCase());
+            }
+            responseObserver.onNext(Empty.getDefaultInstance());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             responseObserver.onError(new StatusRuntimeException(Status.fromThrowable(e)));
         }

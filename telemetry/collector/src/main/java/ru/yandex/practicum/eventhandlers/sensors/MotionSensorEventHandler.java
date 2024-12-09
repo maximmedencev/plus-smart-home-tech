@@ -1,4 +1,4 @@
-package ru.yandex.practicum.eventhandlers;
+package ru.yandex.practicum.eventhandlers.sensors;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,16 +8,15 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
-import ru.yandex.practicum.kafka.telemetry.event.ClimateSensorAvro;
+import ru.yandex.practicum.kafka.telemetry.event.MotionSensorAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 
 import java.time.Instant;
 
-@RequiredArgsConstructor
-@Component
 @Slf4j
-public class ClimateSensorEventHandler implements SensorEventHandler {
-
+@Component
+@RequiredArgsConstructor
+public class MotionSensorEventHandler implements SensorEventHandler {
     private final KafkaProducer<String, SpecificRecordBase> kafkaProducer;
 
     @Value("${topics.sensors}")
@@ -25,15 +24,15 @@ public class ClimateSensorEventHandler implements SensorEventHandler {
 
     @Override
     public SensorEventProto.PayloadCase getMessageType() {
-        return SensorEventProto.PayloadCase.CLIMATE_SENSOR_EVENT;
+        return SensorEventProto.PayloadCase.MOTION_SENSOR_EVENT;
     }
 
     @Override
     public void handle(SensorEventProto event) {
-        ClimateSensorAvro climateSensorAvro = ClimateSensorAvro.newBuilder()
-                .setTemperatureC(event.getClimateSensorEvent().getTemperatureC())
-                .setHumidity(event.getClimateSensorEvent().getHumidity())
-                .setCo2Level(event.getClimateSensorEvent().getCo2Level())
+        MotionSensorAvro motionSensorAvro = MotionSensorAvro.newBuilder()
+                .setLinkQuality(event.getLightSensorEvent().getLinkQuality())
+                .setMotion(event.getMotionSensorEvent().getMotion())
+                .setVoltage((event.getMotionSensorEvent().getVoltage()))
                 .build();
 
         SensorEventAvro sensorEventAvro = SensorEventAvro.newBuilder()
@@ -41,7 +40,7 @@ public class ClimateSensorEventHandler implements SensorEventHandler {
                 .setHubId(event.getHubId())
                 .setTimestamp(Instant.ofEpochSecond(event.getTimestamp().getSeconds(),
                         event.getTimestamp().getNanos()))
-                .setPayload(climateSensorAvro)
+                .setPayload(motionSensorAvro)
                 .build();
 
         kafkaProducer.send(new ProducerRecord<>(sensorsTopic, sensorEventAvro));
