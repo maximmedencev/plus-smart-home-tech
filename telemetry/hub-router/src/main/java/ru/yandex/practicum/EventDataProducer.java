@@ -22,6 +22,7 @@ public class EventDataProducer {
     private CollectorControllerGrpc.CollectorControllerBlockingStub collectorStub;
 
     Random random = new Random();
+    private final static String HUB_ID = "hub-router";
 
     @Value("${sensor.motionSensors[0].id}")
     private String motionSensorId1;
@@ -225,6 +226,7 @@ public class EventDataProducer {
 
         return SensorEventProto.newBuilder()
                 .setId(sensor.getId())
+                .setHubId(HUB_ID)
                 .setTimestamp(Timestamp.newBuilder()
                         .setSeconds(ts.getEpochSecond())
                         .setNanos(ts.getNano())
@@ -242,6 +244,7 @@ public class EventDataProducer {
 
         return SensorEventProto.newBuilder()
                 .setId(sensor.getId())
+                .setHubId(HUB_ID)
                 .setTimestamp(Timestamp.newBuilder()
                         .setSeconds(ts.getEpochSecond())
                         .setNanos(ts.getNano())
@@ -260,6 +263,7 @@ public class EventDataProducer {
 
         return SensorEventProto.newBuilder()
                 .setId(sensor.getId())
+                .setHubId(HUB_ID)
                 .setTimestamp(Timestamp.newBuilder()
                         .setSeconds(ts.getEpochSecond())
                         .setNanos(ts.getNano())
@@ -276,6 +280,7 @@ public class EventDataProducer {
         Instant ts = Instant.now();
         return SensorEventProto.newBuilder()
                 .setId(sensor.getId())
+                .setHubId(HUB_ID)
                 .setTimestamp(Timestamp.newBuilder()
                         .setSeconds(ts.getEpochSecond())
                         .setNanos(ts.getNano())
@@ -293,6 +298,7 @@ public class EventDataProducer {
 
         return SensorEventProto.newBuilder()
                 .setId(sensor.getId())
+                .setHubId(HUB_ID)
                 .setTimestamp(Timestamp.newBuilder()
                         .setSeconds(ts.getEpochSecond())
                         .setNanos(ts.getNano())

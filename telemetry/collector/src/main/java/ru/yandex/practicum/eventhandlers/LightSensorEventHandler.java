@@ -1,6 +1,7 @@
 package ru.yandex.practicum.eventhandlers;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -8,10 +9,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.LightSensorAvro;
+import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 
 import java.time.Instant;
 
-
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class LightSensorEventHandler implements SensorEventHandler {
@@ -28,14 +30,19 @@ public class LightSensorEventHandler implements SensorEventHandler {
     @Override
     public void handle(SensorEventProto event) {
         LightSensorAvro lightSensorAvro = LightSensorAvro.newBuilder()
-                .setId(event.getId())
-                .setHubId(event.getHubId())
-                .setTimestamp(Instant.ofEpochSecond(event.getTimestamp().getSeconds(),
-                        event.getTimestamp().getNanos()))
                 .setLinkQuality(event.getLightSensorEvent().getLinkQuality())
                 .setLuminosity(event.getLightSensorEvent().getLuminosity())
                 .build();
 
-        kafkaProducer.send(new ProducerRecord<>(sensorsTopic, lightSensorAvro));
+        SensorEventAvro sensorEventAvro = SensorEventAvro.newBuilder()
+                .setId(event.getId())
+                .setHubId(event.getHubId())
+                .setTimestamp(Instant.ofEpochSecond(event.getTimestamp().getSeconds(),
+                        event.getTimestamp().getNanos()))
+                .setPayload(lightSensorAvro)
+                .build();
+
+        kafkaProducer.send(new ProducerRecord<>(sensorsTopic, sensorEventAvro));
+        log.info("{} отправлено {}", this.getClass().getName(), sensorEventAvro);
     }
 }
