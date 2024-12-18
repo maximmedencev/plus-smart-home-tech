@@ -30,6 +30,8 @@ public class ScenarioAddedEventHandler implements HubEventHandler {
 
     @Override
     public void handle(HubEventProto event) {
+
+
         ScenarioAddedEventAvro scenarioAddedEventAvro = ScenarioAddedEventAvro.newBuilder()
                 .setName(event.getScenarioAdded().getName())
                 .setActions(event
@@ -38,6 +40,7 @@ public class ScenarioAddedEventHandler implements HubEventHandler {
                         .map(actionProto -> DeviceActionAvro.newBuilder()
                                 .setSensorId(actionProto.getSensorId())
                                 .setType(ActionTypeAvro.valueOf(actionProto.getType().toString()))
+                                .setValue(actionProto.getValue())
                                 .build())
                         .toList())
                 .setConditions(event
@@ -45,6 +48,7 @@ public class ScenarioAddedEventHandler implements HubEventHandler {
                         .getConditionsList().stream()
                         .map(conditionProto -> ScenarioConditionAvro.newBuilder()
                                 .setSensorId(conditionProto.getSensorId())
+                                .setType(ConditionTypeAvro.valueOf(conditionProto.getType().toString()))
                                 .setOperation(ConditionOperationAvro.valueOf(conditionProto.getOperation().toString()))
                                 .setValue(conditionProto.hasBoolValue() ? conditionProto.getBoolValue() : conditionProto.getIntValue())
                                 .build())
