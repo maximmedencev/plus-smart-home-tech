@@ -67,7 +67,7 @@ public class AggregationStarter {
 
         Properties consumerConfig = new Properties();
 
-        consumerConfig.put(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
+        consumerConfig.put(ConsumerConfig.GROUP_ID_CONFIG, "groupAggregatorConsumer");
         consumerConfig.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         // обязательные настройки
@@ -95,6 +95,7 @@ public class AggregationStarter {
                                 log.info("{} отправлено {}", this.getClass().getName(), sensorsSnapshotAvro);
                             });
                 }
+                consumer.commitSync();
             }
 
         } catch (WakeupException ignored) {

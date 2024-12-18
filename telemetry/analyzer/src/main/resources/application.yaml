@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    driverClassName: "org.postgresql.Driver"
+    url: "jdbc:postgresql://localhost:5432/analyzer"
+    username: "user"
+    password: "12345"
+  sql:
+    init:
+      mode: always
+hibernate:
+  show_sql: true
+  jdbc:
+    time_zone: UTC
+topics:
+  snapshots: "telemetry.snapshots.v1"
+  hubs: "telemetry.hubs.v1"
+bootstrap_server: "localhost:9092"
+key_deserializer_class: "org.apache.kafka.common.serialization.StringDeserializer"
+snapshots_value_deserializer_class: "ru.yandex.practicum.serialization.SensorsSnapshotDeserializer"
+hubevents_value_deserializer_class: "ru.yandex.practicum.serialization.HubEventsDeserializer"
+grpc:
+  client:
+    hub-router:
+      address: 'static://localhost:59090'
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext

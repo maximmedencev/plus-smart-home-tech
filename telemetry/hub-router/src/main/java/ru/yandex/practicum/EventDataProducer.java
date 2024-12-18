@@ -1,5 +1,6 @@
 package ru.yandex.practicum;
 
+import com.google.protobuf.Empty;
 import com.google.protobuf.Timestamp;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.slf4j.Logger;
@@ -22,7 +23,7 @@ public class EventDataProducer {
     private CollectorControllerGrpc.CollectorControllerBlockingStub collectorStub;
 
     Random random = new Random();
-    private final static String HUB_ID = "hub-router";
+    private final static String HUB_ID = "testhub";
 
     @Value("${sensor.motionSensors[0].id}")
     private String motionSensorId1;
@@ -214,10 +215,24 @@ public class EventDataProducer {
 
     private void sendEvent(SensorEventProto event) {
         log.info("Отправляю данные: {}", event.getAllFields());
-        //CollectorResponse response = collectorStub.collectSensorEvent(event);
-        collectorStub.collectSensorEvent(event);
-        //log.info("Получил ответ от коллектора: {}", response);
+        Empty response = collectorStub.collectSensorEvent(event);
+        if (response.isInitialized()) {
+            log.info("Получил ответ от коллектора");
+        } else {
+            log.info("Ответ от коллектора не получен");
+        }
     }
+
+    private void sendEvent(HubEventProto event) {
+        log.info("Отправляю данные: {}", event.getAllFields());
+        Empty response = collectorStub.collectHubEvent(event);
+        if (response.isInitialized()) {
+            log.info("Получил ответ от коллектора");
+        } else {
+            log.info("Ответ от коллектора не получен");
+        }
+    }
+
 
     private SensorEventProto createTemperatureSensorEvent(TemperatureSensor sensor) {
         int temperatureCelsius = sensor.getTemperature();
