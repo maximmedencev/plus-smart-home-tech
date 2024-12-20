@@ -61,8 +61,12 @@ public class HubEventProcessor implements Runnable {
                         hubEventConsumer.poll(Duration.ofMillis(1000));
 
                 for (ConsumerRecord<String, HubEventAvro> record : hubEventsRecords) {
-                    log.info("Получено сообщение из партиции {}, со смещением {}:\n{}\n",
-                            record.partition(), record.offset(), record.value());
+                    log.info("Получено сообщение {}\nтипа {}\nиз топика {}\nиз партиции {}\nсо смещением {}",
+                            record.value(),
+                            record.value().getClass().getSimpleName(),
+                            hubsTopic,
+                            record.partition(),
+                            record.offset());
 
                     String hubId = record.value().getHubId();
                     Object payload = record.value().getPayload();

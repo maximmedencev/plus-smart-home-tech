@@ -16,11 +16,13 @@ public class HubRouterController extends HubRouterControllerGrpc.HubRouterContro
     @Override
     public void handleDeviceAction(DeviceActionRequest request, StreamObserver<Empty> responseObserver) {
         try {
-            log.info("--> В {} получено DeviceActionRequest {} от сервиса analyzer", this.getClass().getName(), request);
+            log.info("Получено grpc сообщение {} от analyzer",
+                    request);
             responseObserver.onNext(Empty.getDefaultInstance());
             responseObserver.onCompleted();
         } catch (Exception e) {
-            log.error("--> В {} произошла ошибка {}", this.getClass().getName(), e.getMessage());
+            log.error("Во время приема grpc сообщения в методе handleDeviceAction произошла ошибка {}",
+                    e.getMessage());
             responseObserver.onError(new StatusRuntimeException(Status.fromThrowable(e)));
         }
     }

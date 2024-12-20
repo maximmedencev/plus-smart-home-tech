@@ -43,7 +43,10 @@ public class MotionSensorEventHandler implements SensorEventHandler {
                 .setPayload(motionSensorAvro)
                 .build();
 
+        log.info("\nОтправляю сообщение {}\nтипа {}\nв топик {}\n",
+                sensorEventAvro,
+                this.getMessageType(),
+                sensorsTopic);
         kafkaProducer.send(new ProducerRecord<>(sensorsTopic, sensorEventAvro));
-        log.info("{} отправлено {}", this.getClass().getName(), sensorEventAvro);
     }
 }

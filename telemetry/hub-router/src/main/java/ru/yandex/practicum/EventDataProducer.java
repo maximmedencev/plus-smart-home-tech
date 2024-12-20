@@ -214,7 +214,9 @@ public class EventDataProducer {
     }
 
     private void sendEvent(SensorEventProto event) {
-        log.info("Отправляю данные: {}", event.getAllFields());
+        log.info("Отправляю сервису collector событие типа {}\n{}",
+                event.getPayloadCase(),
+                event);
         Empty response = collectorStub.collectSensorEvent(event);
         if (response.isInitialized()) {
             log.info("Получил ответ от коллектора");
@@ -224,7 +226,9 @@ public class EventDataProducer {
     }
 
     private void sendEvent(HubEventProto event) {
-        log.info("Отправляю данные: {}", event.getAllFields());
+        log.info("Отправляю сервису collector событие типа {}\n{}",
+                event.getPayloadCase(),
+                event);
         Empty response = collectorStub.collectHubEvent(event);
         if (response.isInitialized()) {
             log.info("Получил ответ от коллектора");

@@ -82,17 +82,22 @@ public class AggregationStarter {
                 ConsumerRecords<String, SensorEventAvro> records =
                         consumer.poll(Duration.ofMillis(1000));
                 for (ConsumerRecord<String, SensorEventAvro> record : records) {
-                    log.info("Получено сообщение из партиции {}, со смещением {}:\n{}\n",
-                            record.partition(), record.offset(), record.value());
+                    log.info("Получено сообщение {}\nтипа {}\nиз топика {}\nиз партиции {}\nсо смещением {}",
+                            record.value(),
+                            record.value().getClass().getSimpleName(),
+                            sensorsTopic,
+                            record.partition(),
+                            record.offset());
                     Optional<SensorsSnapshotAvro> optionalSensorsSnapshotAvro = updateState(record.value());
                     optionalSensorsSnapshotAvro
                             .ifPresent(sensorsSnapshotAvro -> {
                                 snapshots
                                         .put(record.value().getHubId(), sensorsSnapshotAvro);
 
+                                log.info("Отправляю снапшот {}\n в топик {}",
+                                        sensorsSnapshotAvro,
+                                        sensorsSnapshotsTopic);
                                 producer.send(new ProducerRecord<>(sensorsSnapshotsTopic, sensorsSnapshotAvro));
-
-                                log.info("{} отправлено {}", this.getClass().getName(), sensorsSnapshotAvro);
                             });
                 }
                 consumer.commitSync();

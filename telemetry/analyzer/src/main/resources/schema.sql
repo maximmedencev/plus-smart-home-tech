@@ -1,3 +1,11 @@
+DROP TABLE IF EXISTS
+scenarios,
+sensors,
+conditions,
+actions,
+scenario_actions,
+scenario_conditions;
+
 -- создаём таблицу scenarios
 CREATE TABLE IF NOT EXISTS scenarios (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

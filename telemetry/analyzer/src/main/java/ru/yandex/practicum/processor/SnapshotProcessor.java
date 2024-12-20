@@ -67,15 +67,18 @@ public class SnapshotProcessor {
                         snapshotsConsumer.poll(Duration.ofMillis(1000));
 
                 for (ConsumerRecord<String, SensorsSnapshotAvro> record : snapshotsRecords) {
-                    log.info("\nПолучено сообщение из партиции {}, со смещением {}:\n{}",
-                            record.partition(), record.offset(), record.value());
+                    log.info("Получено сообщение {}\nтипа {}\nиз топика {}\nиз партиции {}\nсо смещением {}",
+                            record.value(),
+                            record.value().getClass().getSimpleName(),
+                            snapshotsTopic,
+                            record.partition(),
+                            record.offset());
                     SensorsSnapshotAvro snapshot = record.value();
                     List<Scenario> hubScenarios = scenarioRepository.findByHubId(snapshot.getHubId());
 
                     hubScenarios.forEach(scenario -> processScenario(snapshot, scenario));
                 }
             }
-
 
         } catch (WakeupException ignored) {
         } catch (Exception e) {

@@ -41,8 +41,11 @@ public class DeviceRemovedEventHandler implements HubEventHandler {
                 .setPayload(deviceRemovedEventAvro)
                 .build();
 
+        log.info("\nОтправляю сообщение {}\nтипа {}\nв топик {}\n",
+                hubEventAvro,
+                this.getMessageType(),
+                hubsTopic);
         kafkaProducer.send(new ProducerRecord<>(hubsTopic, hubEventAvro));
-        log.info("{} отправлено {}", this.getClass().getName(), hubEventAvro);
     }
 }
 

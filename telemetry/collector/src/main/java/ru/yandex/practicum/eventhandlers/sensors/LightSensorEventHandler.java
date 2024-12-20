@@ -42,7 +42,10 @@ public class LightSensorEventHandler implements SensorEventHandler {
                 .setPayload(lightSensorAvro)
                 .build();
 
+        log.info("\nОтправляю сообщение {}\nтипа {}\nв топик {}\n",
+                sensorEventAvro,
+                this.getMessageType(),
+                sensorsTopic);
         kafkaProducer.send(new ProducerRecord<>(sensorsTopic, sensorEventAvro));
-        log.info("{} отправлено {}", this.getClass().getName(), sensorEventAvro);
     }
 }

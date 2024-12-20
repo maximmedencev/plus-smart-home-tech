@@ -45,7 +45,7 @@ public class EventController extends CollectorControllerGrpc.CollectorController
             // проверяем, есть ли обработчик для полученного события
             if (sensorEventHandlers.containsKey(request.getPayloadCase())) {
                 // если обработчик найден, передаём событие ему на обработку
-                log.info("В {} получено {}", this.getClass().getName(), request);
+                log.info("Получено grpc сообщение {} в методе collectSensorEvent", request);
                 sensorEventHandlers.get(request.getPayloadCase()).handle(request);
             } else {
                 throw new IllegalArgumentException("Не могу найти обработчик для события " + request.getPayloadCase());
@@ -57,7 +57,8 @@ public class EventController extends CollectorControllerGrpc.CollectorController
             responseObserver.onCompleted();
         } catch (Exception e) {
             // в случае исключения отправляем ошибку клиенту
-            System.out.println(e.getMessage());
+            log.error("Ошибка {} во время выполнения collectSensorEvent в классе {}",
+                    e.getMessage(), this.getClass().getName());
             responseObserver.onError(new StatusRuntimeException(Status.fromThrowable(e)));
         }
     }
@@ -66,7 +67,7 @@ public class EventController extends CollectorControllerGrpc.CollectorController
     public void collectHubEvent(HubEventProto request, StreamObserver<Empty> responseObserver) {
         try {
             if (hubEventHandlers.containsKey(request.getPayloadCase())) {
-                log.info("В {} получено {}", this.getClass().getName(), request);
+                log.info("Получено grpc сообщение {} в методе collectSensorEvent", request);
                 hubEventHandlers.get(request.getPayloadCase()).handle(request);
             } else {
                 throw new IllegalArgumentException("Не могу найти обработчик для события " + request.getPayloadCase());
@@ -74,7 +75,9 @@ public class EventController extends CollectorControllerGrpc.CollectorController
             responseObserver.onNext(Empty.getDefaultInstance());
             responseObserver.onCompleted();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+
+            log.error("Ошибка {} во время выполнения collectHubEvent в классе {}",
+                    e.getMessage(), this.getClass().getName());
             responseObserver.onError(new StatusRuntimeException(Status.fromThrowable(e)));
         }
     }

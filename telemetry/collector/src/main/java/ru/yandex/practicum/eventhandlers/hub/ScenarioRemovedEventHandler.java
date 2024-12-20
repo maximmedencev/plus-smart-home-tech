@@ -43,8 +43,12 @@ public class ScenarioRemovedEventHandler implements HubEventHandler {
                 .setPayload(scenarioRemovedEventAvro)
                 .build();
 
+        log.info("\nОтправляю сообщение {}\nтипа {}\nв топик {}\n",
+                hubEventAvro,
+                this.getMessageType(),
+                hubsTopic);
+
         kafkaProducer.send(new ProducerRecord<>(hubsTopic, hubEventAvro));
-        log.info("{} отправлено {}", this.getClass().getName(), hubEventAvro);
     }
 
 }
