@@ -1,0 +1,9 @@
+topics:
+  sensors: "telemetry.sensors.v1"
+  hubs: "telemetry.hubs.v1"
+  snapshots: "telemetry.snapshots.v1"
+bootstrap_server: "localhost:9092"
+key_deserializer_class: "org.apache.kafka.common.serialization.StringDeserializer"
+value_deserializer_class: "ru.yandex.practicum.SensorEventDeserializer"
+key_serializer_class: "org.apache.kafka.common.serialization.StringSerializer"
+value_serializer_class: "ru.yandex.practicum.AvroSerializer"
