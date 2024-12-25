@@ -1,9 +1,11 @@
-topics:
-  sensors: "telemetry.sensors.v1"
-  hubs: "telemetry.hubs.v1"
-bootstrap_server: "localhost:9092"
-key_serializer_class: "org.apache.kafka.common.serialization.StringSerializer"
-value_serializer_class: "ru.yandex.practicum.SmartHomeCollectorAvroSerializer"
-grpc:
-  server:
-    port: 9090
+spring:
+  application:
+    name: collector
+  config:
+    import: configserver:http://localhost:8888
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        useRandomPolicy: true
+        max-interval: 6000
