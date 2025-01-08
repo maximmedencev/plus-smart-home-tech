@@ -34,4 +34,28 @@ public class ApiError {
         this.localizedMessage = this.getLocalizedMessage();
 
     }
+
+    public ApiError(HttpStatus httpStatus, NotEnoughProductsInWarehouseException e) {
+        this.cause = e.getCause();
+        this.stackTrace = e.getStackTrace();
+        this.httpStatus = httpStatus;
+        this.userMessage = e.getUserMessage();
+        this.message = e.getMessage();
+        this.suppressed = e.getSuppressed();
+        this.localizedMessage = this.getLocalizedMessage();
+
+    }
+
+    public ApiError(HttpStatus httpStatus, ProductInShoppingCartNotInWarehouse e) {
+        this.cause = e.getCause();
+        this.stackTrace = e.getStackTrace();
+        this.httpStatus = httpStatus;
+        this.userMessage = e.getUserMessage();
+        this.message = e.getMessage();
+        this.suppressed = e.getSuppressed();
+        this.localizedMessage = this.getLocalizedMessage();
+
+    }
+
+
 }

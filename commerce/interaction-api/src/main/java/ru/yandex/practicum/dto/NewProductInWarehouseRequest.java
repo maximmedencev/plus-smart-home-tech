@@ -1,4 +1,4 @@
-package ru.yandex.practicum.request;
+package ru.yandex.practicum.dto;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.yandex.practicum.DimensionDto;
 
 @Getter
 @Setter

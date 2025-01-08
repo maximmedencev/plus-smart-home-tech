@@ -9,7 +9,7 @@ public class NotAuthorizedUserException extends RuntimeException {
     private String userMessage;
 
     public NotAuthorizedUserException(String userMessage) {
-        super(userMessage);
+        super("NotAuthorizedUserException");
         this.setUserMessage(userMessage);
     }
 }

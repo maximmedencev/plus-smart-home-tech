@@ -1,18 +1,21 @@
 package ru.yandex.practicum.service;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.BookedProductsDto;
-import ru.yandex.practicum.ShoppingCartDto;
+import ru.yandex.practicum.controller.WarehouseFeignClient;
+import ru.yandex.practicum.dto.BookedProductsDto;
+import ru.yandex.practicum.dto.ChangeProductQuantityRequest;
+import ru.yandex.practicum.dto.ShoppingCartDto;
 import ru.yandex.practicum.entity.Position;
 import ru.yandex.practicum.entity.ShoppingCart;
 import ru.yandex.practicum.exception.NoProductsInShoppingCartException;
 import ru.yandex.practicum.exception.NotAuthorizedUserException;
+import ru.yandex.practicum.exception.ProductInShoppingCartNotInWarehouse;
 import ru.yandex.practicum.mappers.ShoppingCartMappers;
 import ru.yandex.practicum.repository.PositionRepository;
 import ru.yandex.practicum.repository.ShoppingCartRepository;
-import ru.yandex.practicum.request.ChangeProductQuantityRequest;
-import ru.yandex.practicum.response.ChangeProductQuantityResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +23,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     private final ShoppingCartRepository shoppingCartRepository;
     private final PositionRepository positionRepository;
+    private final WarehouseFeignClient warehouseFeignClient;
 
     @Override
     public ShoppingCartDto getCart(String username) {
@@ -42,10 +47,14 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             shoppingCart.setUsername(username);
             shoppingCart.setPositions(new ArrayList<>());
             shoppingCart = shoppingCartRepository.save(shoppingCart);
+            log.debug("Создана корзина {}", shoppingCart);
+
         }
 
-        return ShoppingCartMappers
+        ShoppingCartDto shoppingCartDto = ShoppingCartMappers
                 .mapToShoppingCartDto(shoppingCart);
+        log.info("Возврат {} после запроса корзины", shoppingCartDto);
+        return shoppingCartDto;
     }
 
     @Override
@@ -62,6 +71,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             shoppingCart.setUsername(username);
             shoppingCart.setPositions(new ArrayList<>());
             shoppingCart = shoppingCartRepository.save(shoppingCart);
+            log.debug("Создана корзина {}", shoppingCart);
+
         }
 
         Map<String, Integer> namesAndQuantities = shoppingCart.getPositions().stream()
@@ -80,10 +91,14 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             position.setProductId(entry.getKey());
             position.setQuantity(entry.getValue());
             positions.add(position);
+            log.debug("Добавлена позиция {} в корзину c id = {}", position, shoppingCart.getCartId());
         }
         positionRepository.saveAll(positions);
 
-        return new ShoppingCartDto(shoppingCart.getCartId(), namesAndQuantities);
+        ShoppingCartDto shoppingCartDto = new ShoppingCartDto(shoppingCart.getCartId(), namesAndQuantities);
+
+        log.info("Возврат {} после добавления товаров", shoppingCartDto);
+        return shoppingCartDto;
     }
 
     @Override
@@ -92,6 +107,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             throw new NotAuthorizedUserException("Имя пользователя не должно быть пустым");
         }
         shoppingCartRepository.setShoppingCartActive(false, username);
+        log.info("Деактивирована корзина пользователя {}", username);
     }
 
     @Override
@@ -131,16 +147,23 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         }
 
         positionRepository.deleteByCartId(shoppingCart.getCartId());
+        log.debug("Очищена корзина с id = {}", shoppingCart.getCartId());
         positionRepository.saveAll(positions);
+        log.debug("В корзину с id = {} Записаны позиции {}", shoppingCart.getCartId(),
+                positions);
 
         shoppingCart = shoppingCartRepository
                 .getShoppingCartByUsernameAndActive(username, true);
 
-        return new ShoppingCartDto(shoppingCart.getCartId(), positionsListToMap(positions));
+        ShoppingCartDto shoppingCartDto = new ShoppingCartDto(shoppingCart.getCartId(),
+                positionsListToMap(positions));
+        log.info("Возврат {} после добавления удаления заданных товаров",
+                shoppingCartDto);
+        return shoppingCartDto;
     }
 
     @Override
-    public ChangeProductQuantityResponse changeQuantity(String username, ChangeProductQuantityRequest changeProductQuantityRequest) {
+    public ShoppingCartDto changeQuantity(String username, ChangeProductQuantityRequest changeProductQuantityRequest) {
         if (username.isBlank()) {
             throw new NotAuthorizedUserException("Имя пользователя не должно быть пустым");
         }
@@ -152,8 +175,16 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             throw new NoProductsInShoppingCartException("Нет искомых товаров в корзине");
         }
 
-        return new ChangeProductQuantityResponse(changeProductQuantityRequest.getProductId(),
-                changeProductQuantityRequest.getNewQuantity());
+        shoppingCartRepository.getShoppingCartIdByUsername(username, true);
+
+        ShoppingCart shoppingCart = shoppingCartRepository
+                .getShoppingCartByUsernameAndActive(username, true);
+
+        ShoppingCartDto shoppingCartDto = ShoppingCartMappers
+                .mapToShoppingCartDto(shoppingCart);
+        log.info("Возврат {} после изменения количества товара", shoppingCartDto);
+        return ShoppingCartMappers
+                .mapToShoppingCartDto(shoppingCart);
     }
 
     @Override
@@ -161,7 +192,32 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         if (username.isBlank()) {
             throw new NotAuthorizedUserException("Имя пользователя не должно быть пустым");
         }
-        return null;
+        ShoppingCart shoppingCart = shoppingCartRepository
+                .getShoppingCartByUsernameAndActive(username, true);
+
+        BookedProductsDto bookedProductsDto;
+        try {
+            log.info("Проверка доступности товара на складе");
+            bookedProductsDto = warehouseFeignClient
+                    .check(ShoppingCartMappers
+                            .mapToShoppingCartDto(shoppingCart));
+            log.info("Данные из склада по корзине с id = {} {}", shoppingCart.getCartId(),
+                    bookedProductsDto);
+
+        } catch (FeignException e) {
+            String userMessage;
+            if (e.contentUTF8().indexOf("ProductInShoppingCartLowQuantityInWarehouse") > 0) {
+                int userMessageStart = e.contentUTF8().indexOf("\"userMessage\":");
+                int userMessageEnd = e.contentUTF8().indexOf("\"message\":", userMessageStart);
+                userMessage = e.contentUTF8().substring(userMessageStart + 15, userMessageEnd - 2);
+                throw new ProductInShoppingCartNotInWarehouse(userMessage);
+
+            } else {
+                userMessage = "Неизвестная ошибка";
+                throw new RuntimeException(userMessage);
+            }
+        }
+        return bookedProductsDto;
     }
 
     private Position getPosition(ShoppingCart shoppingCart, String productId) {

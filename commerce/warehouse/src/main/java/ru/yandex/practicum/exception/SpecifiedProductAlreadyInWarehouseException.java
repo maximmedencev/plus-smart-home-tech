@@ -9,7 +9,7 @@ public class SpecifiedProductAlreadyInWarehouseException extends RuntimeExceptio
     private String userMessage;
 
     public SpecifiedProductAlreadyInWarehouseException(String userMessage) {
-        super(userMessage);
+        super("SpecifiedProductAlreadyInWarehouseException");
         this.setUserMessage(userMessage);
     }
 }

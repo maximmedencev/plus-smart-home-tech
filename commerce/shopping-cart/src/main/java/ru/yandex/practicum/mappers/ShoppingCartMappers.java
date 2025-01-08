@@ -1,6 +1,6 @@
 package ru.yandex.practicum.mappers;
 
-import ru.yandex.practicum.ShoppingCartDto;
+import ru.yandex.practicum.dto.ShoppingCartDto;
 import ru.yandex.practicum.entity.Position;
 import ru.yandex.practicum.entity.ShoppingCart;
 

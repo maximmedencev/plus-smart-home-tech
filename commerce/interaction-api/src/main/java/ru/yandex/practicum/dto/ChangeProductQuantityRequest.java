@@ -1,6 +1,5 @@
-package ru.yandex.practicum.response;
+package ru.yandex.practicum.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -8,8 +7,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
-public class ChangeProductQuantityResponse {
+public class ChangeProductQuantityRequest {
     String productId;
     int newQuantity;
 }

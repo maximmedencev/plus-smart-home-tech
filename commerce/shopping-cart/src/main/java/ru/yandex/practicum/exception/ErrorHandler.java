@@ -23,4 +23,18 @@ public class ErrorHandler {
         return new ApiError(HttpStatus.BAD_REQUEST, exception);
     }
 
+    @ExceptionHandler({NotEnoughProductsInWarehouseException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError NotEnoughProductsInWarehouseException(NotEnoughProductsInWarehouseException exception) {
+        log.warn("Статус 400 -  {}", exception.getMessage(), exception);
+        return new ApiError(HttpStatus.BAD_REQUEST, exception);
+    }
+
+    @ExceptionHandler({ProductInShoppingCartNotInWarehouse.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError ProductInShoppingCartNotInWarehouse(ProductInShoppingCartNotInWarehouse exception) {
+        log.warn("Статус 400 -  {}", exception.getMessage(), exception);
+        return new ApiError(HttpStatus.BAD_REQUEST, exception);
+    }
+
 }

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.yandex.practicum.QuantityState;
+import ru.yandex.practicum.dto.QuantityState;
 
 @Getter
 @Setter

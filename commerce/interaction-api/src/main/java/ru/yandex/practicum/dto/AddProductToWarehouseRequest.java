@@ -1,4 +1,4 @@
-package ru.yandex.practicum.request;
+package ru.yandex.practicum.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

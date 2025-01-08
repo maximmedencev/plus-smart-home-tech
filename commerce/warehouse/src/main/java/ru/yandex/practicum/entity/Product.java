@@ -1,6 +1,9 @@
 package ru.yandex.practicum.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +19,6 @@ import lombok.experimental.FieldDefaults;
 public class Product {
     @Id
     @Column(name = "product_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
     String productId;
     @Column(name = "fragile")
     Boolean fragile;

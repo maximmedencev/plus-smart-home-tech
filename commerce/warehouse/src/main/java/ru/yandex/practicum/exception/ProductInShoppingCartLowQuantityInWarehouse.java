@@ -9,7 +9,7 @@ public class ProductInShoppingCartLowQuantityInWarehouse extends RuntimeExceptio
     private String userMessage;
 
     public ProductInShoppingCartLowQuantityInWarehouse(String userMessage) {
-        super(userMessage);
+        super("ProductInShoppingCartLowQuantityInWarehouse");
         this.setUserMessage(userMessage);
     }
 }

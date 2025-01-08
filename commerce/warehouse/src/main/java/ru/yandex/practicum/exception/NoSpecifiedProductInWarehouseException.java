@@ -9,7 +9,7 @@ public class NoSpecifiedProductInWarehouseException extends RuntimeException {
     private String userMessage;
 
     public NoSpecifiedProductInWarehouseException(String userMessage) {
-        super(userMessage);
+        super("NoSpecifiedProductInWarehouseException");
         this.setUserMessage(userMessage);
     }
 }

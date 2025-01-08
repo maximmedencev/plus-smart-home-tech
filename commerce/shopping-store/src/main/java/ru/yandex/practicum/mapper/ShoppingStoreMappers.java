@@ -1,9 +1,9 @@
 package ru.yandex.practicum.mapper;
 
-import ru.yandex.practicum.ProductCategory;
-import ru.yandex.practicum.ProductDto;
-import ru.yandex.practicum.ProductState;
-import ru.yandex.practicum.QuantityState;
+import ru.yandex.practicum.dto.ProductCategory;
+import ru.yandex.practicum.dto.ProductDto;
+import ru.yandex.practicum.dto.ProductState;
+import ru.yandex.practicum.dto.QuantityState;
 import ru.yandex.practicum.entity.Product;
 
 public class ShoppingStoreMappers {

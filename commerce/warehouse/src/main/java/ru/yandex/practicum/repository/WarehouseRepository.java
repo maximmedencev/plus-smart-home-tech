@@ -16,5 +16,5 @@ public interface WarehouseRepository extends JpaRepository<Product, String> {
     Integer setQuantity(@Param("quant") Integer quantity,
                         @Param("pid") String productId);
 
-
+    boolean existsByProductId(String productId);
 }

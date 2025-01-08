@@ -1,17 +1,18 @@
 package ru.yandex.practicum.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.AddressDto;
-import ru.yandex.practicum.BookedProductsDto;
-import ru.yandex.practicum.ShoppingCartDto;
+import ru.yandex.practicum.dto.AddProductToWarehouseRequest;
+import ru.yandex.practicum.dto.AddressDto;
+import ru.yandex.practicum.dto.BookedProductsDto;
+import ru.yandex.practicum.dto.NewProductInWarehouseRequest;
+import ru.yandex.practicum.dto.ShoppingCartDto;
 import ru.yandex.practicum.entity.Product;
 import ru.yandex.practicum.exception.NoSpecifiedProductInWarehouseException;
 import ru.yandex.practicum.exception.ProductInShoppingCartLowQuantityInWarehouse;
 import ru.yandex.practicum.exception.SpecifiedProductAlreadyInWarehouseException;
 import ru.yandex.practicum.repository.WarehouseRepository;
-import ru.yandex.practicum.request.AddProductToWarehouseRequest;
-import ru.yandex.practicum.request.NewProductInWarehouseRequest;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class WarehouseServiceImpl implements WarehouseService {
@@ -33,10 +35,13 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     public void addNewProduct(NewProductInWarehouseRequest request) {
-        if (warehouseRepository.existsById(request.getProductId())) {
+
+        log.info("Создание нового продукта {}", request);
+        if (warehouseRepository.existsByProductId(request.getProductId())) {
             throw new SpecifiedProductAlreadyInWarehouseException("Товар с id = " +
                     request.getProductId() + " уже занесен в БД");
         }
+
         Product product = new Product();
         product.setProductId(request.getProductId());
         product.setFragile(request.isFragile());
@@ -45,11 +50,13 @@ public class WarehouseServiceImpl implements WarehouseService {
         product.setDepth(request.getDimension().getDepth());
         product.setWeight(request.getWeight());
 
-        warehouseRepository.save(product);
+        product = warehouseRepository.save(product);
+        log.info("Успешно создан продукт {}", product);
     }
 
     @Override
     public BookedProductsDto check(ShoppingCartDto shoppingCartDto) {
+        log.info("Проверка корзины {}", shoppingCartDto);
         List<String> productIds = shoppingCartDto.getProducts().keySet().stream().toList();
         List<Product> products = warehouseRepository.findAllById(productIds);
 
@@ -65,31 +72,38 @@ public class WarehouseServiceImpl implements WarehouseService {
             }
         }
 
-        return new BookedProductsDto(
+        BookedProductsDto bookedProductsDto = new BookedProductsDto(
                 warehouseProducts.values().stream()
                         .mapToDouble(Product::getWeight).sum(),
                 warehouseProducts.values().stream()
                         .mapToDouble(value -> value.getWidth() * value.getHeight() * value.getDepth()).sum(),
                 isFragile(products)
         );
+        log.info("Корзина с id = {} успешно прошла проверку. Метод вернул {}",
+                shoppingCartDto.getShoppingCartId(),
+                bookedProductsDto);
+        return bookedProductsDto;
     }
 
     @Override
     public void addProduct(AddProductToWarehouseRequest request) {
+        log.info("Запрос на добавление продукта на склад {}", request);
         int rowsUpdated = warehouseRepository.setQuantity(request.getQuantity(), request.getProductId());
         if (rowsUpdated == 0) {
             throw new NoSpecifiedProductInWarehouseException("В БД нет продукта с id = " + request.getProductId());
         }
+        log.info("Запрос на добавление продукта на склад {} успешно выполнен",
+                request);
     }
 
     @Override
     public AddressDto getAddress() {
         String address = CURRENT_ADDRESS;
-        return new AddressDto(address, address, address, address);
+        log.info("Запрос адреса склада");
+        return new AddressDto(address, address, address, address, address);
     }
 
     private boolean isFragile(List<Product> products) {
-        boolean fragile = false;
         for (Product product : products) {
             if (product.getFragile()) {
                 return true;

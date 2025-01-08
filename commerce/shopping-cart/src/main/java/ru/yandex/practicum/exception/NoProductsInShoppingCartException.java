@@ -9,7 +9,7 @@ public class NoProductsInShoppingCartException extends RuntimeException {
     private String userMessage;
 
     public NoProductsInShoppingCartException(String userMessage) {
-        super(userMessage);
+        super("NoProductsInShoppingCartException");
         this.setUserMessage(userMessage);
     }
 }

@@ -1,9 +1,8 @@
 package ru.yandex.practicum.service;
 
-import ru.yandex.practicum.BookedProductsDto;
-import ru.yandex.practicum.ShoppingCartDto;
-import ru.yandex.practicum.request.ChangeProductQuantityRequest;
-import ru.yandex.practicum.response.ChangeProductQuantityResponse;
+import ru.yandex.practicum.dto.BookedProductsDto;
+import ru.yandex.practicum.dto.ChangeProductQuantityRequest;
+import ru.yandex.practicum.dto.ShoppingCartDto;
 
 import java.util.Map;
 
@@ -18,8 +17,8 @@ public interface ShoppingCartService {
     ShoppingCartDto remove(String username,
                            Map<String, Integer> products);
 
-    ChangeProductQuantityResponse changeQuantity(String username,
-                                                 ChangeProductQuantityRequest changeProductQuantityRequest);
+    ShoppingCartDto changeQuantity(String username,
+                                   ChangeProductQuantityRequest changeProductQuantityRequest);
 
 
     BookedProductsDto booking(String username);
