@@ -5,8 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class NotAuthorizedUserException extends RuntimeException {
-    private String userMessage;
+public class NotAuthorizedUserException extends BaseException {
 
     public NotAuthorizedUserException(String userMessage) {
         super("NotAuthorizedUserException");

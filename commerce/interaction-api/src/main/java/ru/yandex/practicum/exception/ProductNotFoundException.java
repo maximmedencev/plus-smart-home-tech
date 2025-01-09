@@ -5,8 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ProductNotFoundException extends RuntimeException {
-    private String userMessage;
+public class ProductNotFoundException extends BaseException {
 
     public ProductNotFoundException(String userMessage) {
         super(userMessage);

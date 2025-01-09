@@ -8,6 +8,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class ChangeProductQuantityRequest {
-    String productId;
-    int newQuantity;
+    private String productId;
+    private int newQuantity;
 }

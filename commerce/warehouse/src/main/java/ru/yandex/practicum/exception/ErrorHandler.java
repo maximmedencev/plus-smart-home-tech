@@ -9,19 +9,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
-    @ExceptionHandler({ProductInShoppingCartLowQuantityInWarehouse.class})
+    @ExceptionHandler({ProductInShoppingCartLowQuantityInWarehouse.class,
+            NoSpecifiedProductInWarehouseException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError lowQuantity(ProductInShoppingCartLowQuantityInWarehouse exception) {
+    public ApiError lowQuantity(BaseException exception) {
         log.warn("Статус 400 -  {}", exception.getMessage(), exception);
         return new ApiError(HttpStatus.BAD_REQUEST, exception);
     }
-
-    @ExceptionHandler({NoSpecifiedProductInWarehouseException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError noSpecifiedProduct(NoSpecifiedProductInWarehouseException exception) {
-        log.warn("Статус 400 -  {}", exception.getMessage(), exception);
-        return new ApiError(HttpStatus.BAD_REQUEST, exception);
-    }
-
-
 }

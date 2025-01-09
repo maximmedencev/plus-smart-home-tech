@@ -5,8 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SpecifiedProductAlreadyInWarehouseException extends RuntimeException {
-    private String userMessage;
+public class SpecifiedProductAlreadyInWarehouseException extends BaseException {
 
     public SpecifiedProductAlreadyInWarehouseException(String userMessage) {
         super("SpecifiedProductAlreadyInWarehouseException");

@@ -26,13 +26,13 @@ public interface ShoppingCartFeignClient {
     void deactivateCart(@RequestParam String username);
 
     @PostMapping("/remove")
-    public ShoppingCartDto remove(@RequestParam String username,
-                                  @RequestBody Map<String, Integer> products);
+    ShoppingCartDto remove(@RequestParam String username,
+                           @RequestBody Map<String, Integer> products);
 
     @PostMapping("/change-quantity")
     ShoppingCartDto changeQuantity(@RequestParam String username,
                                    @RequestBody ChangeProductQuantityRequest changeProductQuantityRequest);
 
     @PostMapping("/booking")
-    public BookedProductsDto booking(@RequestParam String username);
+    BookedProductsDto booking(@RequestParam String username);
 }

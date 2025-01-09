@@ -5,8 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ProductInShoppingCartNotInWarehouse extends RuntimeException {
-    private String userMessage;
+public class ProductInShoppingCartNotInWarehouse extends BaseException {
 
     public ProductInShoppingCartNotInWarehouse(String userMessage) {
         super("ProductInShoppingCartNotInWarehouse");

@@ -19,8 +19,8 @@ INSERT INTO carts(cart_id, username, active)
 VALUES('newcart', 'Ivan', true);
 
 INSERT INTO carts_positions(product_id, cart_id, quantity)
-VALUES('first', 'newcart', 100);
+VALUES('first', 'newcart', 1);
 INSERT INTO carts_positions(product_id, cart_id, quantity)
-VALUES('second', 'newcart', 100);
+VALUES('second', 'newcart', 1);
 INSERT INTO carts_positions(product_id, cart_id, quantity)
 VALUES('third', 'newcart', 1);

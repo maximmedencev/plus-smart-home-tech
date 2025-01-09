@@ -211,10 +211,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 int userMessageEnd = e.contentUTF8().indexOf("\"message\":", userMessageStart);
                 userMessage = e.contentUTF8().substring(userMessageStart + 15, userMessageEnd - 2);
                 throw new ProductInShoppingCartNotInWarehouse(userMessage);
-
             } else {
-                userMessage = "Неизвестная ошибка";
-                throw new RuntimeException(userMessage);
+                throw new RuntimeException(e.getMessage());
             }
         }
         return bookedProductsDto;
