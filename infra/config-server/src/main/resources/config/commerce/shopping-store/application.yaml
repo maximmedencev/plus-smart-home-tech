@@ -1,0 +1,11 @@
+spring:
+  sql:
+    init:
+      mode: always
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5433/shoppingstoredb
+    username: user
+    password: 12345
+hibernate:
+  show_sql: true
