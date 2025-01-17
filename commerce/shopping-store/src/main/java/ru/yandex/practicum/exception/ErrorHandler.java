@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ErrorHandler {
     @ExceptionHandler({ProductNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiError validationException(ProductNotFoundException exception) {
+    public ApiError productNotFoundException(ProductNotFoundException exception) {
         log.warn("Статус 404 -  {}", exception.getMessage(), exception);
         return new ApiError(HttpStatus.NOT_FOUND, exception);
     }

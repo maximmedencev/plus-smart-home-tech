@@ -12,3 +12,6 @@ CREATE TABLE IF NOT EXISTS products (
     product_category varchar(16),
     price double precision
 );
+
+INSERT INTO products(product_id, product_name, description, image_src, quantity_state, product_state, rating, product_category, price)
+VALUES(1,'product1','desc1','img.png', 'ENDED', 'ACTIVE', 5, 'CONTROL', 111.1);
