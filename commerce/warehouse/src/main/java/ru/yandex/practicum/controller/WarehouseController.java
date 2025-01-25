@@ -19,6 +19,8 @@ import ru.yandex.practicum.dto.NewProductInWarehouseRequest;
 import ru.yandex.practicum.dto.ShoppingCartDto;
 import ru.yandex.practicum.service.WarehouseService;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/warehouse")
@@ -37,7 +39,6 @@ public class WarehouseController implements WarehouseFeignClient {
     @ResponseStatus(HttpStatus.OK)
     public BookedProductsDto check(@Valid @RequestBody ShoppingCartDto shoppingCartDto) {
         return warehouseService.check(shoppingCartDto);
-
     }
 
     @PostMapping("/add")
@@ -52,4 +53,9 @@ public class WarehouseController implements WarehouseFeignClient {
         return warehouseService.getAddress();
     }
 
+    @PostMapping("/return")
+    @ResponseStatus(HttpStatus.OK)
+    public void returnProducts(@RequestBody Map<String, Integer> products) {
+        warehouseService.returnProducts(products);
+    }
 }

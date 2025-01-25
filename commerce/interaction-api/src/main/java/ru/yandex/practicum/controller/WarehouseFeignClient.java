@@ -12,6 +12,8 @@ import ru.yandex.practicum.dto.BookedProductsDto;
 import ru.yandex.practicum.dto.NewProductInWarehouseRequest;
 import ru.yandex.practicum.dto.ShoppingCartDto;
 
+import java.util.Map;
+
 @FeignClient(name = "warehouse")
 public interface WarehouseFeignClient {
 
@@ -26,5 +28,8 @@ public interface WarehouseFeignClient {
 
     @GetMapping("/api/v1/warehouse/address")
     AddressDto getAddress();
+
+    @PostMapping("/api/v1/warehouse/return")
+    void returnProducts(Map<String, Integer> products);
 
 }

@@ -14,4 +14,10 @@ CREATE TABLE IF NOT EXISTS products (
 );
 
 INSERT INTO products(product_id, product_name, description, image_src, quantity_state, product_state, rating, product_category, price)
-VALUES(1,'product1','desc1','img.png', 'ENDED', 'ACTIVE', 5, 'CONTROL', 111.1);
+VALUES('product1','product1','desc1','img.png', 'ENDED', 'ACTIVE', 5, 'CONTROL', 10.0);
+
+INSERT INTO products(product_id, product_name, description, image_src, quantity_state, product_state, rating, product_category, price)
+VALUES('product2','product2','desc1','img.png', 'ENDED', 'ACTIVE', 5, 'CONTROL', 20.0);
+
+INSERT INTO products(product_id, product_name, description, image_src, quantity_state, product_state, rating, product_category, price)
+VALUES('product3','product3','desc1','img.png', 'ENDED', 'ACTIVE', 5, 'CONTROL', 30.0);
