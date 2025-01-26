@@ -75,8 +75,7 @@ public class OrderServiceImpl implements OrderService {
         log.info("Произвожу возврат товаров " + request);
         try {
             warehouseFeignClient.returnProducts(request.getProducts());
-        } catch (
-                FeignException e) {
+        } catch (FeignException e) {
             String userMessage;
             if (e.contentUTF8().indexOf("NoSpecifiedProductInWarehouseException") > 0) {
                 int userMessageStart = e.contentUTF8().indexOf("\"userMessage\":");

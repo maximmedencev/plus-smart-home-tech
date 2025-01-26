@@ -9,23 +9,23 @@ import java.util.stream.Collectors;
 
 public class OrderMappers {
     public static OrderDto mapToOrderDto(Order order) {
-        OrderDto orderDto = new OrderDto();
-        orderDto.setOrderId(order.getOrderId());
-        orderDto.setShoppingCartId(order.getCartId());
-        orderDto.setPaymentId(order.getPaymentId());
-        orderDto.setDeliveryId(order.getDeliveryId());
-        orderDto.setState(OrderState.valueOf(order.getState()));
-        orderDto.setDeliveryWeight(order.getDeliveryWeight());
-        orderDto.setDeliveryVolume(order.getDeliveryVolume());
-        orderDto.setFragile(order.isFragile());
-        orderDto.setTotalPrice(order.getTotalPrice());
-        orderDto.setDeliveryPrice(order.getDeliveryPrice());
-        orderDto.setProductPrice(order.getProductPrice());
-        orderDto.setProducts(order.getPositions().stream().
-                collect(Collectors.toMap(Position::getProductId,
-                        Position::getQuantity)));
-        orderDto.setUsername(order.getUsername());
-        return orderDto;
+        return OrderDto.builder().
+                orderId(order.getOrderId()).
+                shoppingCartId(order.getCartId()).
+                paymentId(order.getPaymentId()).
+                deliveryId(order.getDeliveryId()).
+                state(OrderState.valueOf(order.getState())).
+                deliveryWeight(order.getDeliveryWeight()).
+                deliveryVolume(order.getDeliveryVolume()).
+                fragile(order.isFragile()).
+                totalPrice(order.getTotalPrice()).
+                deliveryPrice(order.getDeliveryPrice()).
+                productPrice(order.getProductPrice()).
+                products(order.getPositions().stream().
+                        collect(Collectors.toMap(Position::getProductId,
+                                Position::getQuantity)))
+                .username(order.getUsername())
+                .build();
     }
 
     public static Order mapToOrder(OrderDto orderDto) {

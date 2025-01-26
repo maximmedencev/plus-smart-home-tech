@@ -8,9 +8,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.entity.Delivery;
 
+import java.util.Optional;
+
 @Repository
 public interface DeliveryRepository extends JpaRepository<Delivery, String> {
-    Delivery findByOrderId(String orderId);
+    Optional<Delivery> findByOrderId(String orderId);
 
     @Transactional
     @Modifying

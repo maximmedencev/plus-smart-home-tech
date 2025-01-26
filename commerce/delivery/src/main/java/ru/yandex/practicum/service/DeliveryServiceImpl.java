@@ -91,15 +91,13 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Override
     public double getCost(OrderDto orderDto) {
         log.info("Расчет стоимость доставки заказа {}", orderDto.getOrderId());
-        Delivery delivery = deliveryRepository.findByOrderId(orderDto.getOrderId());
-        if (delivery == null) {
-            throw new NoDeliveryFoundException(
-                    "Не найдена доставка для расчёта для заказа с id = " + orderDto.getOrderId());
-        }
+        Delivery delivery = deliveryRepository.findByOrderId(orderDto.getOrderId())
+                .orElseThrow(() -> new NoDeliveryFoundException(
+                        "Не найдена доставка для расчёта для заказа с id = " + orderDto.getOrderId()));
         double cost = BASE_DELIVERY_COST;
 
         if (addressContainsValue(delivery.getFromAddress(), ADDRESS_2)) {
-            cost = cost + cost * 2;
+            cost += cost + cost * 2;
         }
         if (orderDto.getFragile()) {
             cost = cost + cost * 0.2;
