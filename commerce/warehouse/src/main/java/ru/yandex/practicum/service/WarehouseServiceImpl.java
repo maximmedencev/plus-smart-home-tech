@@ -3,6 +3,7 @@ package ru.yandex.practicum.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.dto.AddProductToWarehouseRequest;
 import ru.yandex.practicum.dto.AddressDto;
 import ru.yandex.practicum.dto.BookedProductsDto;
@@ -88,7 +89,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     public void addProduct(AddProductToWarehouseRequest request) {
         log.info("Запрос на добавление продукта на склад {}", request);
-        int rowsUpdated = warehouseRepository.setQuantity(request.getQuantity(), request.getProductId());
+        int rowsUpdated = warehouseRepository.addQuantity(request.getQuantity(), request.getProductId());
         if (rowsUpdated == 0) {
             throw new NoSpecifiedProductInWarehouseException("В БД нет продукта с id = " + request.getProductId());
         }
@@ -101,6 +102,19 @@ public class WarehouseServiceImpl implements WarehouseService {
         String address = CURRENT_ADDRESS;
         log.info("Запрос адреса склада");
         return new AddressDto(address, address, address, address, address);
+    }
+
+    @Transactional
+    @Override
+    public void returnProducts(Map<String, Integer> products) {
+        log.info("Возврат продуктов: {}", products);
+        for (Map.Entry<String, Integer> entry : products.entrySet()) {
+            int rowsUpdated = warehouseRepository.addQuantity(entry.getValue(), entry.getKey());
+            if (rowsUpdated == 0) {
+                throw new NoSpecifiedProductInWarehouseException("Продукт " + entry.getKey()
+                        + " не найден на складе");
+            }
+        }
     }
 
     private boolean isFragile(List<Product> products) {

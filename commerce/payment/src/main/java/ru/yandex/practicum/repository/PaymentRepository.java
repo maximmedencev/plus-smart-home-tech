@@ -6,16 +6,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.entity.Product;
+import ru.yandex.practicum.entity.Payment;
 
 @Repository
-public interface WarehouseRepository extends JpaRepository<Product, String> {
+public interface PaymentRepository extends JpaRepository<Payment, String> {
+
     @Transactional
     @Modifying
-    @Query("update Product p set p.quantity = p.quantity + :quant where p.productId = :pid ")
-    Integer addQuantity(@Param("quant") Integer quantity,
-                        @Param("pid") String productId);
-
-    boolean existsByProductId(String productId);
-
+    @Query("update Payment p set p.paymentStatus = :pst where p.paymentId = :pid")
+    void setPaymentStatus(@Param("pst") String paymentStatus, @Param("pid") String paymentId);
 }
+

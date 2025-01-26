@@ -18,21 +18,21 @@ public interface ShoppingCartFeignClient {
     @GetMapping
     ShoppingCartDto getCart(@RequestParam String username);
 
-    @PutMapping
+    @PutMapping("/api/v1/shopping-cart")
     ShoppingCartDto addToCart(@RequestParam String username,
                               @RequestBody Map<String, Integer> products);
 
-    @DeleteMapping
+    @DeleteMapping("/api/v1/shopping-cart")
     void deactivateCart(@RequestParam String username);
 
-    @PostMapping("/remove")
+    @PostMapping("/api/v1/shopping-cart/remove")
     ShoppingCartDto remove(@RequestParam String username,
                            @RequestBody Map<String, Integer> products);
 
-    @PostMapping("/change-quantity")
+    @PostMapping("/api/v1/shopping-cart/change-quantity")
     ShoppingCartDto changeQuantity(@RequestParam String username,
                                    @RequestBody ChangeProductQuantityRequest changeProductQuantityRequest);
 
-    @PostMapping("/booking")
+    @PostMapping("/api/v1/shopping-cart/booking")
     BookedProductsDto booking(@RequestParam String username);
 }

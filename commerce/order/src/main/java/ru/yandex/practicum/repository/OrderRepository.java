@@ -6,16 +6,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.entity.Product;
+import ru.yandex.practicum.entity.Order;
+
+import java.util.List;
 
 @Repository
-public interface WarehouseRepository extends JpaRepository<Product, String> {
+public interface OrderRepository extends JpaRepository<Order, String> {
+    List<Order> findByUsername(String username);
+
     @Transactional
     @Modifying
-    @Query("update Product p set p.quantity = p.quantity + :quant where p.productId = :pid ")
-    Integer addQuantity(@Param("quant") Integer quantity,
-                        @Param("pid") String productId);
-
-    boolean existsByProductId(String productId);
-
+    @Query("update Order o set o.state = :st where o.orderId = :oid")
+    void setOrderStatus(@Param("st") String state, @Param("oid") String orderId);
 }
